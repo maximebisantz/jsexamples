@@ -1,0 +1,213 @@
+<!Doctype>
+<html>
+	<head>
+		<style type="text/css">
+			.box1{
+				width: 200px;
+				height: 200px;
+				background: blue;
+				position: relative;
+			}
+			.box2{
+				width: 200px;
+				height: 200px;
+				background: pink;
+				position: relative;
+				border: 1px solid black;
+			}
+			#container{
+				border: 1px solid green;
+				float: left;
+				position: absolute;
+				top: 10px;
+				left: 50px;
+			}
+			#container2 {
+				border: 1px solid red;
+				float: left;
+				position: absolute;
+				top: 460px;
+				left: 300px
+			}
+		</style>
+		<script type="text/javascript">
+
+		/** http://javascript.info/tutorial/mouse-events */
+			function fixPageXY(e) {
+				if (e.pageX == null && e.clientX != null ) {
+					var html = document.documentElement
+					var body = document.body
+					
+					e.pageX = e.clientX + (html.scrollLeft || body && body.scrollLeft || 0)
+					e.pageX -= html.clientLeft || 0
+					
+					e.pageY = e.clientY + (html.scrollTop || body && body.scrollTop || 0)
+					e.pageY -= html.clientTop || 0
+				}
+			}
+		
+			function createHolderElement(baseElement){
+
+				var elm = baseElement.cloneNode();
+
+				elm.style.position = 'relative';
+				elm.style.opacity = "0.5";
+				elm.id = 'holder';
+				
+				baseElement.parentElement.insertBefore(elm, baseElement);
+				
+				return elm;
+			}
+			
+			
+			function retrieveCoordinatesForAllBoxes(container){
+				// MAKE IT MORE FLEXIBLE AND GENERIC
+				var allBoxes = container.getElementsByTagName('div');
+				var coordinates = [];
+
+				for(var i = 0; i < allBoxes.length ; i++){
+					var rect = allBoxes[i].getBoundingClientRect();
+					coordinates[i] = {
+							'element': allBoxes[i],
+							'top' 	 : rect.top,
+							'left' 	 : rect.left,
+							'height' : allBoxes[i].offsetHeight,
+							'width'  : allBoxes[i].offsetWidth
+					}
+				}
+				
+				return coordinates;
+				
+			}
+			
+			
+			var documentMouseMove = function(e, dragBox){
+				var e = e || event;
+				var boxes = retrieveCoordinatesForAllBoxes(dragBox.parentNode);
+				var holder = document.getElementById('holder');
+				
+				fixPageXY(e);
+				
+				// creating a mouseover for each box;
+				for(var i = 0; i <= boxes.length -1; i++){
+					var box = boxes[i];
+					
+  					if(box.element == dragBox ||  box.element == holder)
+						continue; 
+ 					
+					if(e.pageX >= box.left && e.pageX <= box.left + box.width
+							&& e.pageY >= box.top && e.pageY <= box.top + box.height){
+						//HERE GOES THE CODE FOR MOUSE OVER EVENT.
+
+						// Switch the Holder with the Box
+						var posElm = null;
+						var posHol = null;
+						
+						//defining if the holder is before or after the node
+						for(var j=0; j <= boxes.length -1; j++){
+							if(boxes[j].element == box.element)
+								posElm = j
+							if(boxes[j].element == holder)
+								posHol = j;
+						}
+						
+						// Conditional statement to correct insertBefore glitch and moving the holder box
+						if(posElm < posHol){
+							holder.parentNode.insertBefore(holder, box.element);
+						}else{
+							if(boxes[i+1]){
+ 								holder.parentNode.insertBefore(holder, boxes[i+1].element);
+							}else{
+								holder.parentNode.appendChild(holder);
+							}
+						}
+							
+					}
+				}
+				
+			}
+			
+			window.addEventListener('load', function(){
+				var box = document.getElementById('box1');
+				
+				box.addEventListener('mousedown', function(e){
+					// ensure the scope
+					var self = this;
+					var rect = self.getBoundingClientRect();
+					var boxLeft = e.pageX - rect.left;
+					var boxTop = e.pageY - rect.top;
+					var holder;
+					
+					// Global Mouse Move Event
+					var windowOnMouseMove = function (e){
+						documentMouseMove(e, self);
+					}
+					window.addEventListener('mousemove', windowOnMouseMove);
+
+					// Fixing mouse positioning
+					fixPageXY(e);
+
+					// Bring the styles for the drag event
+					this.style.position = 'absolute';
+					this.style.zIndex = '1000';
+					
+					// Making a holder block from the clone of the element
+					holder = createHolderElement(this);
+
+ 					this.style.left =  e.pageX - boxLeft + 'px';
+					this.style.top = e.pageY - boxTop + 'px';
+
+					// Drag event
+					var onmousemove =  function(e){
+						e = e || event;
+						fixPageXY(e);
+						
+						self.style.left = e.pageX - boxLeft + 'px';
+						self.style.top = e.pageY - boxTop + 'px';
+					}
+					document.addEventListener('mousemove', onmousemove);
+					
+					// End of the drag event
+					document.addEventListener('mouseup', function(){
+						
+						
+						document.removeEventListener('mousemove', onmousemove);
+						window.removeEventListener('mousemove', windowOnMouseMove);
+
+						// put back the box in its original place
+						
+						self.style.left = 0;
+						self.style.top = 0;
+
+						
+						self.style.position = 'relative';
+						
+						// Replace the placeholder with the box
+						
+						
+						if(holder.parentNode){
+							holder.parentNode.replaceChild(self, holder);
+						}
+						
+						
+						
+					})
+					
+				})
+				
+			})
+		
+		
+		</script>
+	</head>
+	<body>
+		<div id="container">
+			<div id="box1" class="box1"> 1 </div>
+			<div id="box2" class="box2"> 2 </div>
+			<div id="box212" class="box2"> 3 </div>
+			<div id="box212" class="box2"> 4 </div>
+		</div>
+		
+		
+	</body>
+</html>

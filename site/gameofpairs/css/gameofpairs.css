@@ -1,0 +1,44 @@
+/*****************************
+	GAME OF PAIRS StyleSheet 
+******************************/
+
+
+main{
+	width: 820px;
+	margin: 0 auto;
+}
+
+#game{
+	padding: 10% 0;
+}
+
+main div.card{
+
+	float: left;
+	margin-right: 5px;
+}
+.glorybox{
+	position: absolute;
+	width: 50%;
+	height: 25%;
+	background: White;
+	border: 5px solid Black;
+	text-align: center;
+	padding-top: 100px;
+	margin: 0 25%;
+}
+.glorybox button{
+	display: block;
+	margin: 15px auto;
+	width: 200px;
+}
+#settings{
+	border: 1px solid black;
+	padding: 15px;
+}
+#settings span{
+	margin-left: 30px;
+}
+#settings span span{
+	margin-left: 0;
+}

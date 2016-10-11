@@ -1,0 +1,10 @@
+main{
+	height: 100%;
+	overflow: auto;
+}
+#mainContent{
+	padding: 30px;
+}
+#mainContent p {
+	margin-bottom: 40px;
+}

@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+	<head>
+		<style>
+				li{
+					border: 1px solid red;
+					heigth: 30px;
+					width: 200px;
+					background: lightyellow;
+					list-style: none;
+					padding: 10px;
+				}
+			
+		</style>
+		<script type="text/javascript" src="sortableList.js"></script>
+		<script type="text/javascript">
+		
+			
+			window.addEventListener('load', function(){
+				sortableList('container')
+			})
+		
+		</script>
+	</head>
+	<body>
+		<ul id="container">
+			<li>Lorem ipsum dolor sit amet</li>
+			<li>consectetur adipiscing elit. Vivamus faucibus consequat du</li>
+			<li> id dignissim </li>
+			<li> sem suscipit non</li>
+		</ul>
+	</body>
+</html>
